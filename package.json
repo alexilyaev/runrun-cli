@@ -1,6 +1,6 @@
 {
   "name": "runrun",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Badass interactive npm scripts runner.",
   "main": "index.js",
   "scripts": {
