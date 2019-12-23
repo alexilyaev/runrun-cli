@@ -1,0 +1,9 @@
+{
+  "root": true,
+
+  "extends": ["ai", "ai/jest", "ai/lodash", "ai/promise"],
+
+  "rules": {
+    "promise/no-native": 0
+  }
+}

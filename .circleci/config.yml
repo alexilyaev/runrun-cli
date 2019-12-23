@@ -1,0 +1,63 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+
+version: 2
+
+# YAML Anchors and Aliases
+# https://circleci.com/docs/2.0/writing-yaml/
+# https://circleci.com/blog/circleci-hacks-reuse-yaml-in-your-circleci-config-with-yaml/
+
+# Download and cache dependencies
+# https://circleci.com/docs/2.0/yarn/
+# https://circleci.com/docs/2.0/caching/
+_restore_yarn_cache: &restore_yarn_cache
+  keys:
+    - yarn-packages-{{ checksum "yarn.lock" }}
+
+_save_yarn_cache: &save_yarn_cache
+  key: yarn-packages-{{ checksum "yarn.lock" }}
+  paths:
+    - ~/.cache/yarn
+
+_defaults: &defaults
+  steps:
+    - run: node -v
+    - checkout
+    - restore_cache: *restore_yarn_cache
+    - run: yarn install --frozen-lockfile
+    - save_cache: *save_yarn_cache
+    - run: npm run lint
+
+# Setup
+
+jobs:
+  node-latest:
+    <<: *defaults
+
+    docker:
+      - image: circleci/node:latest
+
+  node-lts:
+    <<: *defaults
+
+    docker:
+      - image: circleci/node:lts
+
+  node-v8:
+    <<: *defaults
+
+    docker:
+      # Some tools depends on `execa` and it has specific node versions dependency:
+      # error execa@2.0.3: The engine "node" is incompatible with this module.
+      # Expected version "^8.12.0 || >=9.7.0".
+      - image: circleci/node:8.12
+
+workflows:
+  version: 2
+  node-multi-build:
+    jobs:
+      - node-latest
+      - node-lts
+      - node-v8
