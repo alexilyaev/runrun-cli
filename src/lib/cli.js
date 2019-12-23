@@ -1,27 +1,43 @@
 'use strict';
 
+const _ = require('lodash');
+const path = require('path');
 const columnify = require('columnify');
 const chalk = require('chalk');
 const yargs = require('yargs');
 const EOL = require('os').EOL;
+const prompts = require('prompts');
+const execa = require('execa');
 
 const pkg = require('../../package.json');
 
 /**
  * Define command line arguments
  */
-yargs
+const args = yargs
   .usage('runrun [options]')
   .example('runrun', '')
-  // .option('v', {
-  //   type: 'boolean',
-  //   alias: 'version',
-  //   describe: `Print current version of runrun`,
-  // })
+  .example('runrun -a', '')
+  .example('runrun -c path/to/package.custom.json', '')
+  .option('c', {
+    type: 'string',
+    alias: 'config',
+    describe: `Path to custom package.json`,
+  })
+  .option('a', {
+    type: 'boolean',
+    alias: 'all',
+    describe: `Show all available scripts instead of just 10`,
+  })
   .help('h')
   .alias('h', 'help')
   .group(['help'], 'General:')
   .wrap(100).argv;
+
+const targetConfigPath = args.config
+  ? path.resolve(args.config)
+  : path.resolve(process.cwd(), 'package.json');
+const configJson = require(targetConfigPath);
 
 /**
  * High resolution timing API
@@ -94,6 +110,69 @@ function printTimingAndExit(startTime) {
 }
 
 /**
+ * Custom filtering logic, for better matching
+ *
+ * @param {string} input What the user typed so far
+ * @param {Array}  choices All available choices
+ */
+function suggestByTitle(input, choices) {
+  return Promise.resolve(
+    choices.filter(item => {
+      const inputSplit = input.split(/\s/);
+
+      return inputSplit.every(subInput => item.title.includes(subInput));
+    })
+  );
+}
+
+/**
+ * @see [prompts](https://github.com/terkelg/prompts)
+ */
+async function promptUser() {
+  const { scripts } = configJson;
+
+  if (!scripts) {
+    printColumns(
+      chalk.red('There are no npm scripts found in the target package.json')
+    );
+    process.exit(0);
+  }
+
+  const responses = await prompts([
+    {
+      type: 'autocomplete',
+      name: 'script',
+      message: 'Choose or type the npm script to run:',
+      choices: _.map(scripts, (command, scriptName) => ({
+        title: scriptName,
+        value: scriptName,
+      })),
+      suggest: suggestByTitle,
+      limit: args.all ? _.keys(scripts).length : 10,
+    },
+  ]);
+
+  if (_.isEmpty(responses)) {
+    printColumns('Aborting...');
+
+    return process.exit();
+  }
+
+  return responses.script;
+}
+
+/**
+ * @param {string} targetScriptName The npm script to run
+ * @see [execa options](https://github.com/sindresorhus/execa#options)
+ */
+function runNpmScript(targetScriptName) {
+  return execa.command(`npm run ${targetScriptName}`, {
+    cwd: path.dirname(targetConfigPath),
+    stdio: 'inherit',
+  });
+}
+
+/**
  * Hit it
  */
 function init() {
@@ -103,6 +182,8 @@ function init() {
 
   Promise.resolve()
     .then(printBegin)
+    .then(promptUser)
+    .then(runNpmScript)
     .then(printTimingAndExit.bind(null, startTime))
     .catch(handleError);
 }
