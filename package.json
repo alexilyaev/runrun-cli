@@ -1,7 +1,7 @@
 {
   "name": "runrun-cli",
   "version": "1.0.0",
-  "description": "Badass interactive npm scripts runner.",
+  "description": "Delightful interactive npm scripts runner",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -58,13 +58,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alexilyaev/runrun.git"
+    "url": "git+https://github.com/alexilyaev/runrun-cli.git"
   },
   "keywords": [],
   "author": "Alex Ilyaev",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/alexilyaev/runrun/issues"
+    "url": "https://github.com/alexilyaev/runrun-cli/issues"
   },
-  "homepage": "https://github.com/alexilyaev/runrun#readme"
+  "homepage": "https://github.com/alexilyaev/runrun-cli#readme"
 }
