@@ -10,14 +10,10 @@ Delightful interactive npm scripts runner.
 ## Installation
 
 ```shell
-yarn global add runrun-cli
+npm install -g runrun-cli
 ```
 
-Or...
-
-```shell
-npm install --global runrun-cli
-```
+This will enable you to execute `runrun` anywhere in the command line.
 
 ## Usage
 
@@ -27,7 +23,7 @@ npm install --global runrun-cli
 runrun
 ```
 
-For CLI options, use the -h (or --help) argument:
+For CLI options, use the `-h` (or `--help`) argument:
 
 ```shell
 runrun -h
