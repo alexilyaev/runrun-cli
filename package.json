@@ -3,6 +3,9 @@
   "version": "1.1.0",
   "description": "Delightful interactive npm scripts runner",
   "main": "index.js",
+  "bin": {
+    "runrun": "src/bin/runrun.js"
+  },
   "scripts": {
     "start": "node index.js",
     "start-basic": "node index.js --config tests/configs/basic/package.json",
@@ -28,9 +31,6 @@
       "npm run base-prettier -- --write",
       "git add"
     ]
-  },
-  "bin": {
-    "runrun": "src/bin/runrun.js"
   },
   "dependencies": {
     "chalk": "2.4.2",
