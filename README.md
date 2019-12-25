@@ -13,11 +13,17 @@ Delightful interactive npm scripts runner.
 
 ## Installation
 
+Try it out with `npx`:
+
+```shell
+npx runrun-cli
+```
+
+Install globally (enables to execute `runrun` anywhere in the command line):
+
 ```shell
 npm install -g runrun-cli
 ```
-
-This will enable you to execute `runrun` anywhere in the command line.
 
 ## Usage
 
