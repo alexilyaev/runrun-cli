@@ -148,7 +148,7 @@ async function promptUser() {
         value: scriptName,
       })),
       suggest: suggestByTitle,
-      limit: args.all ? _.keys(scripts).length : 10,
+      limit: args.all ? _.keys(scripts).length : 20,
     },
   ]);
 
