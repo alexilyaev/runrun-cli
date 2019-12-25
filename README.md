@@ -7,6 +7,10 @@
 
 Delightful interactive npm scripts runner.
 
+## Demo
+
+![runrun demo](demo.gif)
+
 ## Installation
 
 ```shell
