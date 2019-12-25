@@ -60,7 +60,13 @@
     "type": "git",
     "url": "git+https://github.com/alexilyaev/runrun-cli.git"
   },
-  "keywords": [],
+  "keywords": [
+    "npm",
+    "run",
+    "scripts",
+    "cli",
+    "interactive"
+  ],
   "author": "Alex Ilyaev",
   "license": "MIT",
   "bugs": {
