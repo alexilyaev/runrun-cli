@@ -8,6 +8,7 @@ const yargs = require('yargs');
 const EOL = require('os').EOL;
 const prompts = require('prompts');
 const execa = require('execa');
+const updateNotifier = require('update-notifier');
 
 const pkg = require('../../package.json');
 
@@ -110,6 +111,13 @@ function printTimingAndExit(startTime) {
 }
 
 /**
+ * Check for package update
+ */
+function notifyOnUpdate() {
+  updateNotifier({ configJson }).notify();
+}
+
+/**
  * Custom filtering logic, for better matching
  *
  * @param {string} input What the user typed so far
@@ -185,6 +193,7 @@ function init() {
     .then(promptUser)
     .then(runNpmScript)
     .then(printTimingAndExit.bind(null, startTime))
+    .then(notifyOnUpdate)
     .catch(handleError);
 }
 
