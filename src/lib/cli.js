@@ -8,6 +8,7 @@ const yargs = require('yargs');
 const EOL = require('os').EOL;
 const prompts = require('prompts');
 const execa = require('execa');
+const updateNotifier = require('update-notifier');
 
 const pkg = require('../../package.json');
 
@@ -110,6 +111,24 @@ function printTimingAndExit(startTime) {
 }
 
 /**
+ * Check for package update
+ */
+function notifyOnUpdate() {
+  const notifier = updateNotifier({
+    pkg: {
+      name: configJson.name,
+      version: configJson.version,
+    },
+    // How often to check for updates (1 day)
+    updateCheckInterval: 1000 * 60 * 60 * 24,
+    // By default does not notify when running as an npm script
+    shouldNotifyInNpmScript: true,
+  });
+
+  notifier.notify({ defer: false });
+}
+
+/**
  * Custom filtering logic, for better matching
  *
  * @param {string} input What the user typed so far
@@ -175,17 +194,21 @@ function runNpmScript(targetScriptName) {
 /**
  * Hit it
  */
-function init() {
+async function init() {
   const startTime = time();
 
   process.on('unhandledRejection', handleError);
 
-  Promise.resolve()
-    .then(printBegin)
-    .then(promptUser)
-    .then(runNpmScript)
-    .then(printTimingAndExit.bind(null, startTime))
-    .catch(handleError);
+  await printBegin();
+  await notifyOnUpdate();
+  const targetScript = await promptUser();
+
+  await runNpmScript(targetScript);
+  await printTimingAndExit(startTime);
 }
 
-init();
+try {
+  init();
+} catch (error) {
+  handleError(error);
+}
