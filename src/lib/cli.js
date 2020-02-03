@@ -114,7 +114,18 @@ function printTimingAndExit(startTime) {
  * Check for package update
  */
 function notifyOnUpdate() {
-  updateNotifier({ configJson }).notify();
+  const notifier = updateNotifier({
+    pkg: {
+      name: configJson.name,
+      version: configJson.version,
+    },
+    // How often to check for updates (1 day)
+    updateCheckInterval: 1000 * 60 * 60 * 24,
+    // By default does not notify when running as an npm script
+    shouldNotifyInNpmScript: true,
+  });
+
+  notifier.notify({ defer: false });
 }
 
 /**
@@ -183,18 +194,21 @@ function runNpmScript(targetScriptName) {
 /**
  * Hit it
  */
-function init() {
+async function init() {
   const startTime = time();
 
   process.on('unhandledRejection', handleError);
 
-  Promise.resolve()
-    .then(printBegin)
-    .then(promptUser)
-    .then(runNpmScript)
-    .then(printTimingAndExit.bind(null, startTime))
-    .then(notifyOnUpdate)
-    .catch(handleError);
+  await printBegin();
+  await notifyOnUpdate();
+  const targetScript = await promptUser();
+
+  await runNpmScript(targetScript);
+  await printTimingAndExit(startTime);
 }
 
-init();
+try {
+  init();
+} catch (error) {
+  handleError(error);
+}
