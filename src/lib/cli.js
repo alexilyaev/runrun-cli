@@ -112,6 +112,7 @@ function printTimingAndExit(startTime) {
 
 /**
  * Check for package update
+ * https://github.com/yeoman/update-notifier
  */
 function notifyOnUpdate() {
   const notifier = updateNotifier({
