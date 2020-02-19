@@ -4,7 +4,8 @@
   "description": "Delightful interactive npm scripts runner",
   "main": "index.js",
   "bin": {
-    "runrun": "src/bin/runrun.js"
+    "runrun": "src/bin/runrun.js",
+    "rr": "src/bin/runrun.js"
   },
   "scripts": {
     "start": "node index.js",
