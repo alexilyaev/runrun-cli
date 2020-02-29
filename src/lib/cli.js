@@ -20,6 +20,7 @@ const args = yargs
   .example('runrun', '')
   .example('runrun -a', '')
   .example('runrun -c path/to/package.custom.json', '')
+  .example('runrunrun', 'Rerun last executed script')
   .option('c', {
     type: 'string',
     alias: 'config',
@@ -29,6 +30,11 @@ const args = yargs
     type: 'boolean',
     alias: 'all',
     describe: `Show all available scripts instead of just 10`,
+  })
+  .option('r', {
+    type: 'boolean',
+    alias: 'rerun',
+    describe: `Rerun the last executed script`,
   })
   .help('h')
   .alias('h', 'help')
