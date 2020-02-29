@@ -9,6 +9,8 @@ const EOL = require('os').EOL;
 const prompts = require('prompts');
 const execa = require('execa');
 const updateNotifier = require('update-notifier');
+const envPaths = require('env-paths');
+const fs = require('fs-extra');
 
 const pkg = require('../../package.json');
 
@@ -45,6 +47,9 @@ const targetConfigPath = args.config
   ? path.resolve(args.config)
   : path.resolve(process.cwd(), 'package.json');
 const configJson = require(targetConfigPath);
+
+const cachePath = envPaths(configJson.name).data;
+const cacheDataFile = path.join(cachePath, '.data.json');
 
 /**
  * High resolution timing API
@@ -164,6 +169,12 @@ async function promptUser() {
     process.exit(0);
   }
 
+  if (args.r) {
+    const cache = await fs.readJson(cacheDataFile);
+
+    return cache.lastTargetedScript;
+  }
+
   const responses = await prompts([
     {
       type: 'autocomplete',
@@ -199,6 +210,16 @@ function runNpmScript(targetScriptName) {
 }
 
 /**
+ *
+ */
+async function cacheTargetScript(targetScriptName) {
+  await fs.ensureDir(cachePath);
+  await fs.writeJson(cacheDataFile, {
+    lastTargetedScript: targetScriptName,
+  });
+}
+
+/**
  * Hit it
  */
 async function init() {
@@ -211,6 +232,7 @@ async function init() {
   const targetScript = await promptUser();
 
   await runNpmScript(targetScript);
+  await cacheTargetScript(targetScript);
   await printTimingAndExit(startTime);
 }
 

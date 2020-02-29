@@ -40,7 +40,9 @@
     "lodash": "4.17.15",
     "prompts": "2.3.0",
     "update-notifier": "4.0.0",
-    "yargs": "14.0.0"
+    "yargs": "14.0.0",
+    "env-paths": "2.2.0",
+    "fs-extra": "8.1.0"
   },
   "devDependencies": {
     "babel-eslint": "10.0.3",
