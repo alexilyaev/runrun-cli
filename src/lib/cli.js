@@ -12,14 +12,16 @@ const updateNotifier = require('update-notifier');
 
 const pkg = require('../../package.json');
 
+const defaultResultsLimit = 20;
+
 /**
  * Define command line arguments
  */
 const args = yargs
-  .usage('runrun [options]')
-  .example('runrun', '')
-  .example('runrun -a', '')
-  .example('runrun -c path/to/package.custom.json', '')
+  .usage('rr [options]')
+  .example('rr', '')
+  .example('rr -a', '')
+  .example('rr -c path/to/package.custom.json', '')
   .option('c', {
     type: 'string',
     alias: 'config',
@@ -28,7 +30,7 @@ const args = yargs
   .option('a', {
     type: 'boolean',
     alias: 'all',
-    describe: `Show all available scripts instead of just 10`,
+    describe: `Show all available scripts instead of just ${defaultResultsLimit}`,
   })
   .help('h')
   .alias('h', 'help')
@@ -168,7 +170,7 @@ async function promptUser() {
         value: scriptName,
       })),
       suggest: suggestByTitle,
-      limit: args.all ? _.keys(scripts).length : 20,
+      limit: args.all ? _.keys(scripts).length : defaultResultsLimit,
     },
   ]);
 
@@ -200,12 +202,12 @@ async function init() {
 
   process.on('unhandledRejection', handleError);
 
-  await printBegin();
-  await notifyOnUpdate();
+  printBegin();
+  notifyOnUpdate();
   const targetScript = await promptUser();
 
   await runNpmScript(targetScript);
-  await printTimingAndExit(startTime);
+  printTimingAndExit(startTime);
 }
 
 try {

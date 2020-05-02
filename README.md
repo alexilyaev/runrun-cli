@@ -1,4 +1,4 @@
-# runrun
+# runrun-cli
 
 [![version](https://img.shields.io/npm/v/runrun-cli?style=flat-square)](http://npm.im/runrun-cli)
 [![MIT License](https://img.shields.io/npm/l/runrun-cli?style=flat-square)](http://opensource.org/licenses/MIT)
@@ -19,7 +19,7 @@ Try it out with `npx`:
 npx runrun-cli
 ```
 
-Install globally (enables to execute `runrun` anywhere in the command line):
+Install globally (enables to execute `rr` anywhere in the command line):
 
 ```shell
 npm install -g runrun-cli
@@ -27,16 +27,17 @@ npm install -g runrun-cli
 
 ## Usage
 
-`runrun` looks for a `package.json` with `scripts` defined and lets you interactively choose which script to run:
+`rr` looks for a `package.json` with `scripts` defined and lets you
+interactively choose which script to run:
 
 ```shell
-runrun
+rr
 ```
 
 For CLI options, use the `-h` (or `--help`) argument:
 
 ```shell
-runrun -h
+rr -h
 ```
 
 ## Contributing
