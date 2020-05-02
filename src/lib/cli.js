@@ -130,8 +130,8 @@ function printTimingAndExit(startTime) {
 function notifyOnUpdate() {
   const notifier = updateNotifier({
     pkg: {
-      name: configJson.name,
-      version: configJson.version,
+      name: pkg.name,
+      version: pkg.version,
     },
     // How often to check for updates (1 day)
     updateCheckInterval: 1000 * 60 * 60 * 24,
