@@ -23,8 +23,22 @@ for automatically reformatting your code with Prettier on Save or using a hotkey
 There are test configs under `tests/configs/`, so we can provide a specific config using:
 
 ```shell
-npm start -- --config tests/configs/mixed.config.js
+npm start -- --config tests/configs/basic/package.json
 ```
+
+### Testing in a real project
+
+We can link our local `runrun-cli` repo as a global package on our machine, and
+then use it as the user would in any other project.
+
+Run this in your local `runrun-cli` repo:
+
+```shell
+yarn link
+```
+
+If the package is already linked, we can `yarn unlink` and `yarn link` again.
+Now run `rr` in any project on your machine.
 
 ## Commit Message Format
 
