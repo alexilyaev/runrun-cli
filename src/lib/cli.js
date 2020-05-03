@@ -9,38 +9,54 @@ const EOL = require('os').EOL;
 const prompts = require('prompts');
 const execa = require('execa');
 const updateNotifier = require('update-notifier');
+const envPaths = require('env-paths');
+const fs = require('fs-extra');
+const crypto = require('crypto');
 
 const pkg = require('../../package.json');
 
-const defaultResultsLimit = 20;
+const DEFAULT_RESULTS_LIMIT = 20;
+const currentWorkingDir = process.cwd();
 
 /**
  * Define command line arguments
  */
 const args = yargs
-  .usage('rr [options]')
-  .example('rr', '')
-  .example('rr -a', '')
-  .example('rr -c path/to/package.custom.json', '')
-  .option('c', {
-    type: 'string',
-    alias: 'config',
-    describe: `Path to custom package.json`,
+  .example('rr [options]', 'Run interactive scripts runner')
+  .example('rrr', 'Rerun last executed script (same as `rr -r`)')
+  .option('r', {
+    type: 'boolean',
+    alias: 'rerun',
+    describe: `Rerun the last executed script`,
   })
   .option('a', {
     type: 'boolean',
     alias: 'all',
-    describe: `Show all available scripts instead of just ${defaultResultsLimit}`,
+    describe: `Show all available scripts instead of just ${DEFAULT_RESULTS_LIMIT}`,
+  })
+  .option('c', {
+    type: 'string',
+    alias: 'config',
+    describe: `Path to custom package.json, relative to current working dir`,
+  })
+  // For debugging purposes
+  .option('cacheFile', {
+    type: 'boolean',
+    alias: 'cacheFile',
+    describe: `Show the cache file path for the current project`,
+    hidden: true,
   })
   .help('h')
   .alias('h', 'help')
   .group(['help'], 'General:')
+  // Allow setting CLI options with environment variables:
+  // https://github.com/yargs/yargs/blob/master/docs/api.md#envprefix
+  .env('RUNRUN_CLI')
   .wrap(100).argv;
 
-const targetConfigPath = args.config
-  ? path.resolve(args.config)
-  : path.resolve(process.cwd(), 'package.json');
-const configJson = require(targetConfigPath);
+const userConfigPath = args.config || 'package.json';
+const userConfigFullPath = path.resolve(currentWorkingDir, userConfigPath);
+const userConfig = require(userConfigFullPath);
 
 /**
  * High resolution timing API
@@ -66,8 +82,7 @@ function handleError(err) {
   printColumns(chalk.red('Error: ' + errMsg));
   printColumns(
     chalk.white(
-      "If you can't settle this, please open an issue at:" +
-        EOL +
+      `If you can't settle this, please open an issue at:${EOL}` +
         chalk.cyan(pkg.bugs.url)
     )
   );
@@ -77,10 +92,10 @@ function handleError(err) {
 /**
  * Print to stdout
  *
+ * @see [columnify](https://github.com/timoxley/columnify)
+ *
  * @param {string} heading
  * @param {Array}  [data]
- *
- * @see [columnify](https://github.com/timoxley/columnify)
  */
 function printColumns(heading, data) {
   const columns = columnify(data, {});
@@ -99,7 +114,7 @@ function printColumns(heading, data) {
  * Print a nice header
  */
 function printBegin() {
-  printColumns(chalk.whiteBright.bold(`runrun v${pkg.version}`));
+  printColumns(chalk.whiteBright.dim(`runrun-cli: v${pkg.version}`));
 }
 
 /**
@@ -108,7 +123,9 @@ function printBegin() {
 function printTimingAndExit(startTime) {
   const execTime = time() - startTime;
 
-  printColumns(chalk.green(`Finished in: ${execTime.toFixed()}ms`));
+  printColumns(
+    chalk.green(`${EOL}runrun-cli: Finished in ${execTime.toFixed()}ms`)
+  );
   process.exit(0);
 }
 
@@ -119,8 +136,8 @@ function printTimingAndExit(startTime) {
 function notifyOnUpdate() {
   const notifier = updateNotifier({
     pkg: {
-      name: configJson.name,
-      version: configJson.version,
+      name: pkg.name,
+      version: pkg.version,
     },
     // How often to check for updates (1 day)
     updateCheckInterval: 1000 * 60 * 60 * 24,
@@ -148,18 +165,73 @@ function suggestByTitle(input, choices) {
 }
 
 /**
- * @see [prompts](https://github.com/terkelg/prompts)
+ * Cache the executed script name so we could re-run it using `rrr`.
  */
-async function promptUser() {
-  const { scripts } = configJson;
+async function cacheTargetScript(cacheFilePath, targetScript) {
+  await fs.outputJson(cacheFilePath, {
+    cwd: currentWorkingDir,
+    lastTargetScript: targetScript,
+  });
+}
 
-  if (!scripts) {
+/**
+ * Get the path to the cache file for the current working dir.
+ *
+ * @see
+ * https://medium.com/@chris_72272/what-is-the-fastest-node-js-hashing-algorithm-c15c1a0e164e
+ */
+function getCacheFilePath() {
+  // e.g. On macOS: `/Users/user_name/Library/Preferences/runrun-cli-nodejs`
+  const osConfigDirPath = envPaths(pkg.name).config;
+  // e.g. `CZNTqAaVkXSOJ9ywDrnElP1E1Iw=`
+  const cwdHash = crypto
+    .createHash('sha1')
+    .update(currentWorkingDir)
+    .digest('base64');
+  // e.g. `my-project.CZNTqAaVkXSOJ9ywDrnElP1E1Iw=.json`
+  const filename = `${path.basename(currentWorkingDir)}.${cwdHash}.json`;
+
+  return path.join(osConfigDirPath, filename);
+}
+
+function getLastTargetScriptName(cacheFilePath, scripts) {
+  try {
+    const lastTargetScript = require(cacheFilePath).lastTargetScript;
+
+    if (!scripts[lastTargetScript]) {
+      printColumns(
+        chalk.yellow(
+          `The script '${lastTargetScript}' no longer exists in:${EOL}` +
+            chalk.cyan(userConfigFullPath) +
+            `${EOL}Please choose a script to run...`
+        )
+      );
+
+      return null;
+    }
+
+    return lastTargetScript;
+  } catch (error) {
     printColumns(
-      chalk.red('There are no npm scripts found in the target package.json')
+      chalk.yellow(
+        `No cache found for this project.${EOL}` +
+          `Please choose a script to run...`
+      )
     );
-    process.exit(0);
-  }
 
+    return null;
+  }
+}
+
+/**
+ * Run an interactive autocomplete for the user to choose a script to execute.
+ *
+ * @see
+ * [prompts](https://github.com/terkelg/prompts)
+ *
+ * @param {Array} scripts List of `scripts` from a `package.json` file
+ */
+async function promptUser(scripts) {
   const responses = await prompts([
     {
       type: 'autocomplete',
@@ -170,7 +242,7 @@ async function promptUser() {
         value: scriptName,
       })),
       suggest: suggestByTitle,
-      limit: args.all ? _.keys(scripts).length : defaultResultsLimit,
+      limit: args.all ? _.keys(scripts).length : DEFAULT_RESULTS_LIMIT,
     },
   ]);
 
@@ -184,31 +256,64 @@ async function promptUser() {
 }
 
 /**
+ * @see
+ * [execa options](https://github.com/sindresorhus/execa#options)
+ *
  * @param {string} targetScriptName The npm script to run
- * @see [execa options](https://github.com/sindresorhus/execa#options)
  */
 function runNpmScript(targetScriptName) {
   return execa.command(`npm run ${targetScriptName}`, {
-    cwd: path.dirname(targetConfigPath),
+    // Needed as the user can provide a custom config path
+    cwd: path.dirname(userConfigFullPath),
     stdio: 'inherit',
   });
+}
+
+function validateScripts(scripts) {
+  if (!scripts) {
+    printColumns(
+      chalk.red(
+        `There are no npm scripts found in:${EOL}` +
+          chalk.cyan(userConfigFullPath)
+      )
+    );
+    process.exit(0);
+  }
 }
 
 /**
  * Hit it
  */
 async function init() {
-  const startTime = time();
-
-  process.on('unhandledRejection', handleError);
-
   printBegin();
   notifyOnUpdate();
-  const targetScript = await promptUser();
+
+  const { scripts } = userConfig;
+
+  validateScripts(scripts);
+
+  let targetScript;
+  const cacheFilePath = getCacheFilePath();
+
+  // For debugging purposes
+  if (args.cacheFile) {
+    printColumns(chalk.cyan(cacheFilePath));
+  }
+
+  if (args.rerun) {
+    targetScript = getLastTargetScriptName(cacheFilePath, scripts);
+  }
+
+  targetScript = targetScript || (await promptUser(scripts));
+
+  const startTime = time();
 
   await runNpmScript(targetScript);
+  await cacheTargetScript(cacheFilePath, targetScript);
   printTimingAndExit(startTime);
 }
+
+process.on('unhandledRejection', handleError);
 
 try {
   init();

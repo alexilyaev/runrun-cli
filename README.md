@@ -19,7 +19,7 @@ Try it out with `npx`:
 npx runrun-cli
 ```
 
-Install globally (enables to execute `rr` anywhere in the command line):
+Install globally (enables to execute `rr` and `rrr` anywhere):
 
 ```shell
 npm install -g runrun-cli
@@ -27,11 +27,16 @@ npm install -g runrun-cli
 
 ## Usage
 
-`rr` looks for a `package.json` with `scripts` defined and lets you
-interactively choose which script to run:
+Interactively choose which script to run from `package.json`:
 
 ```shell
 rr
+```
+
+Re-run last chosen script (same as `rr -r`):
+
+```shell
+rrr
 ```
 
 For CLI options, use the `-h` (or `--help`) argument:
