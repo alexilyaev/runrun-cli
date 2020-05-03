@@ -6,8 +6,8 @@
   "bin": {
     "runrun": "src/bin/runrun.js",
     "rr": "src/bin/runrun.js",
-    "runrunrun": "src/bin/runrun.js -r",
-    "rrr": "src/bin/runrun.js -r"
+    "runrunrun": "src/bin/runrunrun.js",
+    "rrr": "src/bin/runrunrun.js"
   },
   "scripts": {
     "start": "node index.js",
