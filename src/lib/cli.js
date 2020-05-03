@@ -167,8 +167,8 @@ function suggestByTitle(input, choices) {
 /**
  * Cache the executed script name so we could re-run it using `rrr`.
  */
-async function cacheTargetScript(cacheFilePath, targetScript) {
-  await fs.outputJson(cacheFilePath, {
+function cacheTargetScript(cacheFilePath, targetScript) {
+  return fs.outputJson(cacheFilePath, {
     cwd: currentWorkingDir,
     lastTargetScript: targetScript,
   });
@@ -308,8 +308,11 @@ async function init() {
 
   const startTime = time();
 
+  // Cache the chosen script so we could re-run it with `rrr` later.
+  // Must happen before we run the script, as the user can exit with Ctrl + C.
+  cacheTargetScript(cacheFilePath, targetScript);
+
   await runNpmScript(targetScript);
-  await cacheTargetScript(cacheFilePath, targetScript);
   printTimingAndExit(startTime);
 }
 
