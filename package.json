@@ -39,7 +39,7 @@
     "chalk": "2.4.2",
     "columnify": "1.5.4",
     "execa": "4.0.0",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "prompts": "2.3.0",
     "update-notifier": "4.0.0",
     "yargs": "14.0.0",
