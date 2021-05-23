@@ -16,7 +16,7 @@ module.exports = {
   printWidth: 80,
   proseWrap: 'preserve',
   semi: true,
-  singleQuote: true, // default: false 123
+  singleQuote: true, // default: false
   tabWidth: 2,
   trailingComma: 'es5',
   useTabs: false,
