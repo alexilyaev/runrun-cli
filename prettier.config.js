@@ -13,11 +13,11 @@ module.exports = {
   htmlWhitespaceSensitivity: 'css',
   jsxBracketSameLine: false,
   jsxSingleQuote: false,
-  printWidth: 80, // default: 80
+  printWidth: 80,
   proseWrap: 'preserve',
   semi: true,
   singleQuote: true, // default: false
   tabWidth: 2,
-  trailingComma: 'es5', // default: none
+  trailingComma: 'es5',
   useTabs: false,
 };
