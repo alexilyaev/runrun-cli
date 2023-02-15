@@ -39,6 +39,11 @@ const args = yargs
     alias: 'config',
     describe: `Path to custom package.json, relative to current working dir`,
   })
+  .option('s', {
+    type: 'boolean',
+    alias: 'select',
+    describe: `Use select instead of autocomplete. Supports vi motion keys.`,
+  })
   // For debugging purposes
   .option('cacheFile', {
     type: 'boolean',
@@ -234,9 +239,9 @@ function getLastTargetScriptName(cacheFilePath, scripts) {
 async function promptUser(scripts) {
   const responses = await prompts([
     {
-      type: 'autocomplete',
+      type: args.select ? 'select' : 'autocomplete',
       name: 'script',
-      message: 'Choose or type the npm script to run:',
+      message: `Choose ${args.select ? '' : 'or type '}the npm script to run:`,
       choices: _.map(scripts, (command, scriptName) => ({
         title: scriptName,
         value: scriptName,
