@@ -13,6 +13,7 @@
     "prepare": "husky install",
     "start": "node index.js",
     "start-basic": "node index.js --config tests/configs/basic/package.json",
+    "start-empty": "node index.js --config tests/configs/empty/package.json",
     "base-prettier": "prettier --ignore-path .gitignore",
     "base-eslint": "eslint --ignore-path .gitignore --rule 'no-console: 1'",
     "format": "npm run base-eslint -- --fix \"**/*.js\" && npm run base-prettier -- --write \"**/*.js\"",
@@ -37,7 +38,7 @@
     "chalk": "2.4.2",
     "columnify": "1.6.0",
     "env-paths": "2.2.0",
-    "execa": "4.0.0",
+    "execa": "7.0.0",
     "fs-extra": "8.1.0",
     "lodash": "4.17.21",
     "prompts": "2.3.0",
@@ -58,7 +59,7 @@
     "prettier": "2.8.4"
   },
   "engines": {
-    "node": "^8.12.0 || >=9.7.0"
+    "node": "^14.18.0 || ^16.14.0 || >=18.0.0"
   },
   "volta": {
     "node": "18.14.0",

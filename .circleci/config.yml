@@ -45,14 +45,14 @@ jobs:
     docker:
       - image: circleci/node:lts
 
-  node-v8:
+  node-legacy:
     <<: *defaults
 
     docker:
       # Some tools depends on `execa` and it has specific node versions dependency:
-      # error execa@2.0.3: The engine "node" is incompatible with this module.
-      # Expected version "^8.12.0 || >=9.7.0".
-      - image: circleci/node:8.12
+      # error The engine "node" is incompatible with this module.
+      # Expected version "^14.18.0 || ^16.14.0 || >=18.0.0".
+      - image: circleci/node:14.18
 
 workflows:
   version: 2
@@ -60,4 +60,4 @@ workflows:
     jobs:
       - node-latest
       - node-lts
-      - node-v8
+      - node-legacy

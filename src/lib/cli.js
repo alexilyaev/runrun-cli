@@ -7,7 +7,6 @@ const chalk = require('chalk');
 const yargs = require('yargs');
 const EOL = require('os').EOL;
 const prompts = require('prompts');
-const execa = require('execa');
 const updateNotifier = require('update-notifier');
 const envPaths = require('env-paths');
 const fs = require('fs-extra');
@@ -268,8 +267,10 @@ async function promptUser(scripts) {
  *
  * @param {string} targetScriptName The npm script to run
  */
-function runNpmScript(targetScriptName) {
-  return execa.command(`npm run ${targetScriptName}`, {
+async function runNpmScript(targetScriptName) {
+  const { execaCommand } = await import('execa');
+
+  return execaCommand(`npm run ${targetScriptName}`, {
     // Needed as the user can provide a custom config path
     cwd: path.dirname(userConfigFullPath),
     stdio: 'inherit',
