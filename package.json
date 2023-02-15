@@ -1,5 +1,5 @@
 {
-  "name"     : "runrun-cli",
+  "name"              : "runrun-cli",
   "version": "1.4.0",
   "description": "Delightful interactive npm scripts runner",
   "main": "index.js",
@@ -11,6 +11,7 @@
   },
   "scripts": {
     "prepare": "husky install",
+    "lint-staged": "lint-staged",
     "start": "node index.js",
     "start-basic": "node index.js --config tests/configs/basic/package.json",
     "base-prettier": "prettier --ignore-path .gitignore",
@@ -32,11 +33,6 @@
     "*.{json,md}": [
       "npm run base-prettier -- --write"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "dependencies": {
     "chalk": "2.4.2",
