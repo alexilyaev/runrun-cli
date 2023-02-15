@@ -23,17 +23,19 @@
     "test-coverage": "npm run test -- --coverage",
     "test-ci": "npm run test-coverage"
   },
+  "lint-staged": {
+    "*.js": [
+      "npm run base-eslint -- --fix --max-warnings 0",
+      "npm run base-prettier -- --write"
+    ],
+    "*.{json,md}": [
+      "npm run base-prettier -- --write"
+    ]
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "lint-staged": {
-    "*.js": [
-      "npm run base-eslint -- --fix --max-warnings 0",
-      "npm run base-prettier -- --write",
-      "git add"
-    ]
   },
   "dependencies": {
     "chalk": "2.4.2",

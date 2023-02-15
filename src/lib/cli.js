@@ -27,28 +27,30 @@ const args = yargs
   .option('r', {
     type: 'boolean',
     alias: 'rerun',
-    describe: `Rerun the last executed script`,
+    describe: 'Rerun the last executed script',
   })
   .option('a', {
     type: 'boolean',
     alias: 'all',
     describe: `Show all available scripts instead of just ${DEFAULT_RESULTS_LIMIT}`,
   })
-  .option('c', {
-    type: 'string',
-    alias: 'config',
-    describe: `Path to custom package.json, relative to current working dir`,
-  })
   .option('s', {
     type: 'boolean',
     alias: 'select',
-    describe: `Use select instead of autocomplete. Supports vi motion keys.`,
+    describe:
+      'Use Prompts select instead of autocomplete (supports vi motion keys)',
+  })
+  .option('c', {
+    type: 'string',
+    alias: 'config',
+    describe:
+      'Path to a `package.json` in a different directory, relative to the current working dir',
   })
   // For debugging purposes
   .option('cacheFile', {
     type: 'boolean',
     alias: 'cacheFile',
-    describe: `Show the cache file path for the current project`,
+    describe: 'Show the cache file path for the current project',
     hidden: true,
   })
   .help('h')

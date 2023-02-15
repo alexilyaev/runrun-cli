@@ -39,10 +39,30 @@ Re-run last chosen script (same as `rr -r`):
 rrr
 ```
 
-For CLI options, use the `-h` (or `--help`) argument:
+## CLI Options
+
+### `-h` (or `--help`)
+
+List all CLI options:
 
 ```shell
 rr -h
+```
+
+### `-s` (or `--select`)
+
+Use Prompts select instead of autocomplete (supports vi motion keys):
+
+```shell
+rr -s
+```
+
+### `-c` (or `--config`)
+
+Path to a `package.json` in a different directory, relative to the current working dir:
+
+```shell
+rr -c sub/path/package.json
 ```
 
 ## Contributing
