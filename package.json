@@ -1,7 +1,7 @@
 {
   "name": "runrun-cli",
   "version": "1.4.0",
-  "description": "Delightful interactive npm scripts runner 123",
+  "description": "Delightful interactive npm scripts runner",
   "main": "index.js",
   "bin": {
     "runrun": "src/bin/runrun.js",
@@ -11,7 +11,6 @@
   },
   "scripts": {
     "prepare": "husky install",
-    "lint-staged": "lint-staged",
     "start": "node index.js",
     "start-basic": "node index.js --config tests/configs/basic/package.json",
     "base-prettier": "prettier --ignore-path .gitignore",
