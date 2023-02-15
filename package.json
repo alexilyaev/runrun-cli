@@ -1,5 +1,5 @@
 {
-  "name"              : "runrun-cli",
+  "name": "runrun-cli",
   "version": "1.4.0",
   "description": "Delightful interactive npm scripts runner",
   "main": "index.js",
@@ -10,6 +10,7 @@
     "rrr": "src/bin/runrunrun.js"
   },
   "scripts": {
+    "prepare": "husky install",
     "start": "node index.js",
     "start-basic": "node index.js --config tests/configs/basic/package.json",
     "base-prettier": "prettier --ignore-path .gitignore",
@@ -56,7 +57,7 @@
     "eslint-plugin-jest": "22.17.0",
     "eslint-plugin-lodash": "6.0.0",
     "eslint-plugin-promise": "4.2.1",
-    "husky": "3.0.8",
+    "husky": "8.0.0",
     "jest": "24.9.0",
     "lint-staged": "9.4.1",
     "prettier": "1.18.2"
@@ -65,8 +66,8 @@
     "node": "^8.12.0 || >=9.7.0"
   },
   "volta": {
-    "node": "12.14.1",
-    "yarn": "1.22.5"
+    "node": "18.14.0",
+    "yarn": "1.22.19"
   },
   "repository": {
     "type": "git",
