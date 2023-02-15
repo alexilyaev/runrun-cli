@@ -1,7 +1,7 @@
 {
   "name": "runrun-cli",
   "version": "1.4.0",
-  "description": "Delightful interactive npm scripts runner",
+  "description": "Delightful interactive npm scripts runner 123",
   "main": "index.js",
   "bin": {
     "runrun": "src/bin/runrun.js",
