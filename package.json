@@ -59,12 +59,9 @@
     "prettier": "2.8.4"
   },
   "engines": {
-    "node": "^14.18.0 || ^16.14.0 || >=18.0.0"
+    "node": "^16.14.0 || >=18.12.0"
   },
-  "volta": {
-    "node": "18.14.0",
-    "yarn": "1.22.19"
-  },
+  "packageManager": "yarn@1.22.19",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alexilyaev/runrun-cli.git"
