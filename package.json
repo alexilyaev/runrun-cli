@@ -11,6 +11,7 @@
   },
   "scripts": {
     "prepare": "husky install",
+    "postpublish": "git push --follow-tags",
     "start": "node index.js",
     "start-basic": "node index.js --config tests/configs/basic/package.json",
     "start-empty": "node index.js --config tests/configs/empty/package.json",
