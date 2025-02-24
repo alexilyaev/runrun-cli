@@ -60,7 +60,7 @@
     "prettier": "2.8.4"
   },
   "engines": {
-    "node": "^16.14.0 || >=18.12.0"
+    "node": ">=18.12.0"
   },
   "packageManager": "yarn@1.22.19",
   "repository": {
